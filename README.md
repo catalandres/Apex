@@ -31,6 +31,9 @@
 	- [Data Maninpulation Language](#data-manipulation-language)
 	- [Apex Class Metadata Templates](#apex-class-metadata-templates)
 	- [Manipulate records with DML](#manipulate-records-with-dml)
+	- [Getter Setter](#getter-setter)
+	- [Class Methods](#class-methods)
+	- [Batch](#batch)
 
 ### How Does Apex Work?
 
@@ -42,6 +45,44 @@ When an end-user triggers the execution Apex, perhaps by clicking a button or ac
 All Apex code runs on the Force.com platform.  To guarantee consistent performance and scalability, the execution of Apex is bound by governor limits that ensure no single Apex execution impacts the overall service of Salesforce.  This means all Apex code is limited by number of operations (such as DML or SOQL) that it can perfrom within one process.
 All Apex requests return a collection that contains from 1 to 50,000 records.   You cannot assume that your code works only on a single records at a time.  Therefore, you must implement programming patterns that take bulk processing into account.  Otherwise, you may run into governor limits.
 ``
+public method = 
+
+private helper method - it cannot be called externally because it is private.
+
+member variables = attributes
+
+accessor methods = used to access attributes
+
+instance method = 
+
+Static method = use static keyword
+
+Static methods are easier to call than instance methods because they dont need to vbe called on an instance of the class but are called directly on the class name.
+
+public scope = 
+
+public static method 
+
+Methods are defined in a class and objects are instances of a given class.
+
+Constructor is a method that is called at the beginning of an object's lifetime to create and intialize the object.
+
+A class variable is any field declared with the static modifier; this tells the compiler that there is exactly one copy of this variable in existence, regardless of how many times the class has been instantiated. 
+
+Instance variables (non-static fields) are unique to each instance of a class. 
+Class variables (static fields) are fields declared with the static modifier; there is exactly one copy of a class variable, regardless of how many times the class has been instantiated.
+Local variables store temporary state inside a method. 
+Parameters are variables that provide extra information to a method; both local variables and parameters are always classified as "variables" (not "fields"). 
+
+    The term "instance variable" is another name for non-static field.
+    The term "class variable" is another name for static field.
+    A local variable stores temporary state; it is declared inside a method.
+    A variable declared within the opening and closing parenthesis of a method is called a parameter.
+    What are the eight primitive data types supported by the Java programming language? byte, short, int, long, float, double, boolean, char
+    Character strings are represented by the class java.lang.String.
+    An array is a container object that holds a fixed number of values of a single type.
+
+All objects have state and behavior, that is, things that an object knows about itself, and things that an object can do.
 
 ### Apex Core Concepts
 
@@ -501,6 +542,16 @@ public class {{ api_name }} implements Auth.RegistrationHandler {
 }
 ```
 ### Batch
+* process records asynchronously in batches to stay within platform limits.
+* The execution logic of the batch class is called once for each batch of records you are processing.
+* Each time you invoke a batch class, the job is placed on the Apex job queue and is executed as a discrete transaction.
+	* Advantages:
+	* Every transaction starts with a new set of governor limits, making it easier to ensure that your code stays within the governor execution limits.
+	* If one batch fails to process successfully, all other successful batch transactions aren’t rolled back.
+	
+* class must implement the Database.Batchable interface and include the following three methods:
+	* start - Used to collect the records or objects to be passed to the interface method execute for processing. This method is called once at the beginning of a Batch Apex job and returns either a Database.QueryLocator object or an Iterable that contains the records or objects passed to the job.
+* To ensure fast execution of batch jobs, minimize Web service callout times and tune queries used in your batch Apex code.
 ```Apex
 global class {{ api_name }} implements Database.Batchable<sObject> {
 	
@@ -757,7 +808,27 @@ queriedContact.Account.Industry = 'Technology';
 update queriedContact;
 // 2. This call is to update the related account's Industry field.
 update queriedContact.Account; 
-
 ````
+### Getter Setter
+```Apex
+public class MyClass {
+	public String myVariable {get; set;}
+}
+```
 
-#### 
+```Apex
+public class MyClass {
+	public String myVariable;
+	
+	public void setMyVariable(String input){
+		myVariable = input;
+	}
+	
+	public String getMyVariable(){
+		return myVariable;
+	}
+}
+```
+
+### Class Methods
+* `void` - if the method does not return a value.
